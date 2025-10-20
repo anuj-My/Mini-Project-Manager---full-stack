@@ -3,7 +3,7 @@ import ProjectCard from "../components/ProjectCard";
 import { ProjectContext } from "../contexts/ProjectContext";
 
 export default function Dashboard() {
-  const { state, dispatch } = useContext(ProjectContext);
+  const { dispatch } = useContext(ProjectContext);
 
   const getAllProjects = async () => {
     dispatch({ type: "LOADING" });
@@ -31,7 +31,7 @@ export default function Dashboard() {
     <div className="pt-20 bg-gray-100 min-h-screen p-6">
       <h2 className="text-3xl font-semibold text-gray-800 mb-6">My Projects</h2>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <ProjectCard data={state.data} loading={state.loading} />
+        <ProjectCard />
       </div>
     </div>
   );

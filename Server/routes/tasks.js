@@ -30,12 +30,12 @@ router.post("/", async (req, res) => {
 router.get("/project/:projectId", async (req, res) => {
   try {
     const { status, sort } = req.query;
-
+    console.log(status, sort);
     let filter = { projectId: req.params.projectId };
 
     if (status) filter.status = status;
 
-    let query = Task.find(filter);
+    let query = Task.find(filter); // find with status
 
     if (sort) {
       query = query.sort({ dueDate: sort === "asc" ? 1 : -1 });

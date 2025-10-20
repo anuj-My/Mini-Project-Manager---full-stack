@@ -1,9 +1,10 @@
 import { useNavigate, useParams } from "react-router-dom";
-import TaskCard from "../components/TaskCard";
-import TaskFilter from "../components/TaskFilter";
+import { useSearchParams } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { TaskContext } from "../contexts/TaskContext";
 import { ProjectContext } from "../contexts/ProjectContext";
+import TaskCard from "../components/TaskCard";
+import TaskFilter from "../components/TaskFilter";
 
 export default function ProjectDetails() {
   const { state, dispatch } = useContext(TaskContext);
@@ -12,6 +13,11 @@ export default function ProjectDetails() {
 
   const navigate = useNavigate();
   const { projectId } = useParams();
+
+  const [searchParams] = useSearchParams();
+
+  const status = searchParams.get("status") || "";
+  const sort = searchParams.get("sort") || "";
 
   const getProjecById = async () => {
     try {
@@ -44,7 +50,7 @@ export default function ProjectDetails() {
       dispatch({ type: "LOADING" });
 
       const res = await fetch(
-        `http://localhost:8000/api/v1/tasks/project/${projectId}`
+        `http://localhost:8000/api/v1/tasks/project/${projectId}?status=${status}&sort=${sort}`
       );
 
       if (!res.ok) {
@@ -63,10 +69,8 @@ export default function ProjectDetails() {
 
   useEffect(() => {
     getTaskByProjectId();
-  }, [projectId, dispatch]);
-
-  const projectTasks = state.data[projectId] || [];
-  console.log(projectState);
+  }, [projectId, status, sort, dispatch]);
+  // console.log(state?.data[projectId].length);
   return (
     <div className="pt-20 p-6 bg-gray-100 min-h-screen">
       <div className="flex justify-between items-center mb-6">
@@ -80,10 +84,10 @@ export default function ProjectDetails() {
           Add Task
         </button>
       </div>
-      {projectTasks.length > 0 && <TaskFilter />}
+      {state?.data?.[projectId]?.length > 0 && <TaskFilter />}
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-        <TaskCard data={projectTasks} />
+        <TaskCard />
       </div>
     </div>
   );

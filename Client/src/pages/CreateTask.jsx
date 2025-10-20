@@ -1,12 +1,12 @@
 import { useContext, useState } from "react";
 import { TaskContext } from "../contexts/TaskContext";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function CreateTask() {
   const { projectId } = useParams();
   const navigate = useNavigate();
   const { state, dispatch } = useContext(TaskContext);
-  const [success, setSuccess] = useState(false);
 
   const initialState = {
     title: "",
@@ -50,7 +50,7 @@ export default function CreateTask() {
       });
       setTask(initialState);
 
-      setSuccess(true);
+      toast(`The Task has been created.`);
 
       setTimeout(() => {
         navigate(`/projects/${projectId}`);
@@ -77,11 +77,6 @@ export default function CreateTask() {
           Create New Task
         </h2>
 
-        {success && (
-          <p className="text-green-600 text-center mb-4">
-            Task created successfully! Redirecting...
-          </p>
-        )}
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"

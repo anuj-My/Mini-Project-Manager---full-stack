@@ -1,5 +1,4 @@
-import { Routes, Route, Link } from "react-router-dom";
-
+import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import Dashboard from "./pages/Dashboard";
 import CreateProject from "./pages/CreateProject";
@@ -10,6 +9,8 @@ import ProjectDetails from "./pages/ProjectDetails";
 import ErrorPage from "./pages/ErrorPage";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         </Routes>
       </main>
       <Footer />
+      <ToastContainer />
     </div>
   );
 }

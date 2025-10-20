@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { ObjectId } from "bson";
 import { ProjectContext } from "../contexts/ProjectContext";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function CreateProject() {
   const navigate = useNavigate();
@@ -13,7 +14,6 @@ export default function CreateProject() {
   const [project, setProject] = useState(initialState);
 
   const { dispatch } = useContext(ProjectContext);
-  const [success, setSuccess] = useState(false);
 
   const handleChange = (e) => {
     const name = e.target.name;
@@ -46,7 +46,7 @@ export default function CreateProject() {
       dispatch({ type: "CREATE_DATA", payload: data?.data?.project });
       setProject(initialState);
 
-      setSuccess(true);
+      toast(`The Project has been created.`);
 
       setTimeout(() => {
         navigate("/");
@@ -72,11 +72,6 @@ export default function CreateProject() {
           Create New Project
         </h2>
 
-        {success && (
-          <p className="text-green-600 text-center mb-4">
-            Task created successfully! Redirecting...
-          </p>
-        )}
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"

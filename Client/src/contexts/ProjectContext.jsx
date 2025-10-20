@@ -32,6 +32,14 @@ const projectReducer = (state, action) => {
         data: [...state.data, action.payload],
       };
 
+    case "DELETE_PROJECT":
+      return {
+        ...state,
+        loading: false,
+        error: "",
+        data: state?.data?.filter((item) => item._id !== action.payload),
+      };
+
     case "LOADING":
       return {
         ...state,

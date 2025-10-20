@@ -31,6 +31,25 @@ const taskReducer = (state, action) => {
         },
       };
 
+    case "UPDATE_DATA":
+      const { updatedTask, projId } = action.payload;
+
+      const updatedTasks =
+        state.data[projId] &&
+        state.data[projId].map((task) => {
+          return task._id === updatedTask._id ? updatedTask : task;
+        });
+
+      return {
+        ...state,
+        loading: false,
+        error: "",
+        data: {
+          ...state.data,
+          [projId]: updatedTasks,
+        },
+      };
+
     case "LOADING":
       return {
         ...state,
