@@ -13,6 +13,7 @@ export default function ProjectDetails() {
 
   const navigate = useNavigate();
   const { projectId } = useParams();
+  const tasks = state.data[projectId] || [];
 
   const [searchParams] = useSearchParams();
 
@@ -67,10 +68,11 @@ export default function ProjectDetails() {
     }
   };
 
+  // console.log(state);
+
   useEffect(() => {
     getTaskByProjectId();
   }, [projectId, status, sort, dispatch]);
-  // console.log(state?.data[projectId].length);
   return (
     <div className="pt-20 p-6 bg-gray-100 min-h-screen">
       <div className="flex justify-between items-center mb-6">
@@ -84,11 +86,15 @@ export default function ProjectDetails() {
           Add Task
         </button>
       </div>
-      {state?.data?.[projectId]?.length > 0 && <TaskFilter />}
+      <TaskFilter />
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-        <TaskCard />
-      </div>
+      {tasks.length === 0 ? (
+        <p className="py-4">"There are now task to show."</p>
+      ) : (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+          <TaskCard />
+        </div>
+      )}
     </div>
   );
 }

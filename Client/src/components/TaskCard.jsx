@@ -9,24 +9,11 @@ export default function TaskCard() {
   const data = state.data[projectId];
 
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
 
-  // const editTask = async () => {
-  //   try {
-  //     const res = await fetch(
-  //       `http://localhost:8000/api/v1/tasks/${projectId}`,
-  //       {
-  //         method: "PATCH",
-  //         headers: {
-  //           "Content-Type": "json/application",
-  //         },
-  //         body: JSON.stringify(),
-  //       }
-  //     );
-  //   } catch (err) {}
-  // };
-
-  const toggleModal = () => {
+  const toggleModal = (task) => {
     setIsOpen(!isOpen);
+    setSelectedTask(task);
   };
 
   const taskList =
@@ -56,7 +43,7 @@ export default function TaskCard() {
           </div>
           <div className="flex justify-end gap-3 mt-4">
             <button
-              onClick={toggleModal}
+              onClick={() => toggleModal(item)}
               className="text-indigo-600 hover:underline"
             >
               Edit
@@ -67,10 +54,12 @@ export default function TaskCard() {
       );
     });
 
+  console.log(state);
+
   return (
     <>
       {taskList}
-      {isOpen && <EditTask setIsOpen={setIsOpen} />}
+      {isOpen && <EditTask setIsOpen={setIsOpen} selectedTask={selectedTask} />}
     </>
   );
 }

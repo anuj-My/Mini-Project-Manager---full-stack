@@ -1,4 +1,87 @@
-const EditTask = ({ setIsOpen }) => {
+import { useContext, useEffect, useState } from "react";
+import { TaskContext } from "../contexts/TaskContext";
+
+const EditTask = ({ setIsOpen, selectedTask }) => {
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    status: "",
+    dueDate: "",
+  });
+
+  const { state, dispatch } = useContext(TaskContext);
+
+  useEffect(() => {
+    if (selectedTask) {
+      setFormData({
+        title: selectedTask.title || "",
+        description: selectedTask.description || "",
+        status: selectedTask.status || "",
+        dueDate: selectedTask.dueDate
+          ? new Date(selectedTask.dueDate).toISOString().split("T")[0]
+          : "",
+      });
+    }
+  }, [selectedTask]);
+
+  const handleChange = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+
+    setFormData((prev) => {
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
+  };
+
+  const updateTask = async () => {
+    dispatch({ type: "LOADING" });
+    try {
+      const res = await fetch(
+        `http://localhost:8000/api/v1/tasks/${selectedTask._id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...formData,
+            dueDate: new Date(formData.dueDate).toISOString(),
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to update task");
+      }
+
+      console.log(data);
+
+      dispatch({
+        type: "UPDATE_DATA",
+        payload: {
+          updatedTask: data.data.task,
+          projId: data.data.task.projectId,
+        },
+      });
+      setIsOpen(false);
+    } catch (err) {
+      dispatch({ type: "SET_ERROR", payload: err.message });
+      setIsOpen(false);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    updateTask();
+  };
+
+  console.log(state);
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md p-6">
@@ -14,7 +97,7 @@ const EditTask = ({ setIsOpen }) => {
           </button>
         </div>
 
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label
               htmlFor="title"
@@ -26,6 +109,8 @@ const EditTask = ({ setIsOpen }) => {
               id="title"
               name="title"
               type="text"
+              value={formData?.title}
+              onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:bg-gray-700 dark:text-white"
               placeholder="Enter task title"
             />
@@ -41,6 +126,8 @@ const EditTask = ({ setIsOpen }) => {
             <textarea
               id="description"
               name="description"
+              value={formData?.description}
+              onChange={handleChange}
               rows="3"
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:bg-gray-700 dark:text-white"
               placeholder="Enter task description"
@@ -57,6 +144,8 @@ const EditTask = ({ setIsOpen }) => {
             <input
               id="dueDate"
               name="dueDate"
+              value={formData.dueDate}
+              onChange={handleChange}
               type="date"
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:bg-gray-700 dark:text-white"
             />
@@ -72,11 +161,13 @@ const EditTask = ({ setIsOpen }) => {
             <select
               id="status"
               name="status"
+              value={formData?.status}
+              onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:bg-gray-700 dark:text-white"
             >
-              <option value="Pending">Pending</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Completed">Completed</option>
+              <option value="todo">To do</option>
+              <option value="in-progress">In Progress</option>
+              <option value="done">Done</option>
             </select>
           </div>
 
